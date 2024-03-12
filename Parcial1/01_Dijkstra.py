@@ -4,9 +4,9 @@
 Este programa te permitirá ingresar manualmente un grafo y un nodo de inicio, y 
 luego calculará las distancias más cortas desde el nodo de inicio a todos los demás nodos. 
 Puedes seguir el proceso paso a paso y ver los resultados en la consola.
-El grafo representa una ciudad, y cada nodo un lugar turístico dentro de esta.
+El grafo representa un estado, y cada nodo una ciudad.
 Puedes calcular la distancia más corta desde un nodo de inicio (que puedes elegir) a los
-demás nodos. La vecindad entre grafos representa la distancia.
+demás nodos.
 
 """
 
