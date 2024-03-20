@@ -1,3 +1,5 @@
+#En este ejemplo, se muestra cómo agregar una nueva regla a la base de conocimientos y cómo utilizarla para realizar inferencias
+
 # Base de conocimientos inicial: Reglas de diagnóstico
 base_conocimientos = {
     "Enfermedad A": {"Síntoma 1": True, "Síntoma 2": False, "Síntoma 3": True},
