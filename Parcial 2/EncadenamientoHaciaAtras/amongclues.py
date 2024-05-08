@@ -14,7 +14,7 @@ class ClueSolverGUI:
 
         self.crime_scene = self.generate_random_combinations()
 
-        self.label = tk.Label(master, text=f"La escena del crimen es: {self.crime_scene[0]} con {self.crime_scene[1]} en {self.crime_scene[2]}")
+        self.label = tk.Label(master, text=f"La escena del crimen es: ...?") #{self.crime_scene[0]} con {self.crime_scene[1]} en {self.crime_scene[2]}
         self.label.pack()
 
         self.start_button = tk.Button(master, text="Comenzar investigación", command=self.start_investigation)
@@ -73,7 +73,7 @@ class ClueSolverGUI:
         category = self.category_var.get()
         self.label.config(text=f"Testimonio sobre {category}: {option}")
         testimony = self.generate_testimony(category, option)
-        messagebox.showinfo("Testimonio", f"Testimonio: {testimony[0]} con {testimony[1]} en {testimony[2]}")
+        messagebox.showinfo("Testimonio", f"Testimonio: Se vió a {testimony[0]}, y un(a) {testimony[1]} en {testimony[2]}")
 
         self.num_attempts += 1
         self.final_guess.append((category, option))
@@ -111,4 +111,3 @@ class ClueSolverGUI:
 root = tk.Tk()
 app = ClueSolverGUI(root)
 root.mainloop()
-
