@@ -1,60 +1,131 @@
 import random
+import tkinter as tk
 
-class Personaje:
-    def __init__(self, nombre, cabello, ojos, genero, sombrero, lentes):
+class PersonajeDisney:
+    def __init__(self, nombre, caracteristicas):
         self.nombre = nombre
-        self.cabello = cabello
-        self.ojos = ojos
-        self.genero = genero
-        self.sombrero = sombrero
-        self.lentes = lentes
+        self.caracteristicas = caracteristicas
 
-    def mostrar_caracteristicas(self):
-        print(f"Nombre: {self.nombre}")
-        print(f"Cabello: {self.cabello}")
-        print(f"Ojos: {self.ojos}")
-        print(f"Género: {self.genero}")
-        print(f"Sombrero: {'Sí' if self.sombrero else 'No'}")
-        print(f"Lentes: {'Sí' if self.lentes else 'No'}")
-        print()
-
-class AdivinaQuien:
+class JuegoAdivinaQuienDisney:
     def __init__(self, personajes):
         self.personajes = personajes
+        self.caracteristicas_preguntadas = set()
 
-    def jugar(self):
-        personaje_a_adivinar = random.choice(self.personajes)
-        print("¡Bienvenido a Adivina Quién!")
-        print("Tu objetivo es adivinar el personaje secreto.")
-        print("Aquí están los personajes:")
-        for i, personaje in enumerate(self.personajes, start=1):
-            print(f"{i}. {personaje.nombre}")
-        print()
-        while True:
-            caracteristica = input("¿Qué característica deseas preguntar? (cabello, ojos, género, sombrero, lentes): ")
-            if caracteristica == "salir":
-                print("¡Hasta luego!")
-                break
-            valor = input(f"¿Cuál es el valor de la característica '{caracteristica}' que quieres preguntar? ")
-            personajes_con_caracteristica = [personaje for personaje in self.personajes if getattr(personaje, caracteristica) == valor]
-            print("Personajes con esa característica:")
-            for personaje in personajes_con_caracteristica:
-                personaje.mostrar_caracteristicas()
-            if len(personajes_con_caracteristica) == 1:
-                if personajes_con_caracteristica[0] == personaje_a_adivinar:
-                    print("¡Has adivinado el personaje secreto! ¡Felicidades!")
-                else:
-                    print("Lo siento, ese no es el personaje secreto. ¡Inténtalo de nuevo!")
-                break
+    def hacer_pregunta(self, pregunta):
+        resultados = []
+        for personaje in self.personajes:
+            if pregunta in personaje.caracteristicas:
+                resultados.append(personaje.nombre)
+        return resultados
 
-# Crear algunos personajes
+    def obtener_pregunta(self):
+        caracteristicas_disponibles = [caracteristica for caracteristica in self.personajes[0].caracteristicas if caracteristica not in self.caracteristicas_preguntadas]
+        if not caracteristicas_disponibles:
+            return None
+        pregunta = random.choice(caracteristicas_disponibles)
+        self.caracteristicas_preguntadas.add(pregunta)
+        return pregunta
+
+    def reiniciar_juego(self):
+        self.caracteristicas_preguntadas.clear()
+
+    def adivinar_personaje(self):
+        return random.choice(self.personajes).nombre
+
+def mostrar_resultado(respuesta):
+    if respuesta:
+        resultado_label.config(text="¡El personaje es {}!".format(respuesta))
+        continuar_button.pack_forget()
+        no_button.pack_forget()
+        cerrar_button.pack(side=tk.RIGHT, padx=10, pady=10)
+    else:
+        resultado_label.config(text="No se encontró ningún personaje que coincida.")
+        continuar_button.pack(side=tk.LEFT, padx=10, pady=10)
+        no_button.pack(side=tk.RIGHT, padx=10, pady=10)
+        cerrar_button.pack_forget()
+
+def iniciar_juego():
+    comenzar_button.pack_forget()
+    siguiente_pregunta()
+
+def responder_si():
+    juego.personajes = [personaje for personaje in juego.personajes if personaje.nombre in resultados]
+    if len(juego.personajes) == 1:
+        mostrar_resultado(juego.personajes[0].nombre)
+    else:
+        siguiente_pregunta()
+
+def responder_no():
+    juego.personajes = [personaje for personaje in juego.personajes if personaje.nombre not in resultados]
+    if len(juego.personajes) == 1:
+        mostrar_resultado(juego.personajes[0].nombre)
+    else:
+        siguiente_pregunta()
+
+def siguiente_pregunta():
+    pregunta = juego.obtener_pregunta()
+    if pregunta is None:
+        if len(juego.personajes) == 1:
+            mostrar_resultado(juego.personajes[0].nombre)
+        else:
+            juego.reiniciar_juego()
+            siguiente_pregunta()
+    else:
+        pregunta_label.config(text=pregunta)
+        resultados.clear()
+        resultados.extend(juego.hacer_pregunta(pregunta))
+        si_button.pack(side=tk.LEFT, padx=10, pady=10)
+        no_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+def continuar_juego():
+    continuar_button.pack_forget()
+    cerrar_button.pack_forget()
+    juego.reiniciar_juego()
+    siguiente_pregunta()
+
+def cerrar_juego():
+    root.destroy()
+
+# Definir personajes y sus características de Disney
 personajes = [
-    Personaje("Ana", "Rubio", "Verdes", "Mujer", False, False),
-    Personaje("Pedro", "Negro", "Marrones", "Hombre", True, True),
-    Personaje("María", "Castaño", "Azules", "Mujer", False, True),
-    Personaje("Juan", "Pelirrojo", "Verdes", "Hombre", True, False),
+    PersonajeDisney("Mickey Mouse", ["Es un ratón", "Usa pantalones rojos", "Tiene guantes blancos"]),
+    PersonajeDisney("Pato Donald", ["Es un pato", "Usa sombrero de marinero", "Tiene un mal genio"]),
+    PersonajeDisney("Goofy", ["Es un perro", "Es torpe", "Tiene dientes grandes"]),
+    PersonajeDisney("Pluto", ["Es un perro", "Es mascota de Mickey", "No habla"]),
+    PersonajeDisney("Blanca Nieves", ["Es una princesa", "Vive en un bosque", "Tiene siete amigos enanos"]),
+    PersonajeDisney("Cenicienta", ["Es una princesa","Tiene cabello rubio", "Pierde su zapatilla"]),
+    PersonajeDisney("Ariel", ["Es una princesa", "Vive en el mar", "Es una sirena"]),
+    PersonajeDisney("Rapunzel",["Es una princesa","Tiene cabello rubio","Tiene un camaleon de mascota"])
+    # Agrega más personajes y características de Disney aquí
 ]
 
-# Iniciar el juego
-juego = AdivinaQuien(personajes)
-juego.jugar()
+# Crear el juego
+juego = JuegoAdivinaQuienDisney(personajes)
+resultados = []
+
+# Configurar ventana
+root = tk.Tk()
+root.title("Adivina Quién - Personajes de Disney")
+
+# Etiqueta para mostrar la pregunta
+pregunta_label = tk.Label(root, text="Piensa en un personaje clásico de Disney y responde a las siguientes preguntas con 'si' o 'no':\nMickeyMouse\nPatoDonald\nGoofy\nPluto\nBlancaNieves\nCenicienta\nAriel\nRapunzel")
+pregunta_label.pack(padx=10, pady=10)
+
+# Botones para responder si o no
+si_button = tk.Button(root, text="Sí", command=responder_si)
+no_button = tk.Button(root, text="No", command=responder_no)
+
+# Botón para comenzar
+comenzar_button = tk.Button(root, text="Comencemos!", command=iniciar_juego)
+comenzar_button.pack(padx=10, pady=10)
+
+# Botones para continuar o cerrar el juego
+continuar_button = tk.Button(root, text="Continuar", command=continuar_juego)
+cerrar_button = tk.Button(root, text="Cerrar", command=cerrar_juego)
+
+# Etiqueta para mostrar el resultado
+resultado_label = tk.Label(root, text="")
+resultado_label.pack(padx=10, pady=10)
+
+# Iniciar la ventana
+root.mainloop()
